@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Smart Expense Splitter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Smart Expense Splitter – track shared expenses and see who owes whom."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-header__title-group">
+        <h1 class="app-title">Smart Expense Splitter</h1>
+        <p class="app-subtitle">
+          Track shared expenses and automatically see who owes whom.
+        </p>
+      </div>
+    </header>
+
+    <main class="app-layout">
+      <section class="panel panel--participants" aria-labelledby="participants-heading">
+        <div class="panel__header">
+          <h2 id="participants-heading" class="panel__title">Participants</h2>
+        </div>
+        <div class="panel__content">
+          <!-- Form and list for participants will be implemented in later issues -->
+          <p class="panel__placeholder">
+            Add the people who share expenses in this group.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel panel--expenses" aria-labelledby="expenses-heading">
+        <div class="panel__header">
+          <h2 id="expenses-heading" class="panel__title">Expenses</h2>
+        </div>
+        <div class="panel__content">
+          <!-- Form and table for expenses will be implemented in later issues -->
+          <p class="panel__placeholder">
+            Enter each expense with payer and involved participants.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel panel--results" aria-labelledby="results-heading">
+        <div class="panel__header">
+          <h2 id="results-heading" class="panel__title">Results</h2>
+        </div>
+        <div class="panel__content">
+          <!-- Calculation results will be implemented in issue #4 -->
+          <p class="panel__placeholder">
+            The balance overview and who owes whom will appear here.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <small>Smart Expense Splitter &middot; Prototype UI layout</small>
+    </footer>
+  </body>
+</html>
+
