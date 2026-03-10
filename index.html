@@ -50,10 +50,24 @@
           <h2 id="results-heading" class="panel__title">Results</h2>
         </div>
         <div class="panel__content">
-          <!-- Calculation results will be implemented in issue #4 -->
-          <p class="panel__placeholder">
-            The balance overview and who owes whom will appear here.
+          <p class="panel__placeholder" id="results-empty-message">
+            No balances yet. Once you add participants and expenses, the result overview will be displayed here.
           </p>
+
+          <div class="results-table-wrapper" aria-live="polite" aria-atomic="true">
+            <table class="results-table" aria-describedby="results-heading">
+              <thead>
+                <tr>
+                  <th scope="col">Participant</th>
+                  <th scope="col">Paid</th>
+                  <th scope="col">Should pay</th>
+                  <th scope="col">Balance</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody id="results-rows"></tbody>
+            </table>
+          </div>
         </div>
       </section>
     </main>
@@ -63,6 +77,7 @@
     </footer>
 
     <script src="app.js" type="module"></script>
+    <script src="results-ui.js" type="module"></script>
   </body>
 </html>
 
