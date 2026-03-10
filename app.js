@@ -24,6 +24,15 @@
  */
 
 /**
+ * @typedef {Object} BalanceEntry
+ * @property {string} participantId
+ * @property {string} name
+ * @property {number} paidTotal
+ * @property {number} shareTotal
+ * @property {number} netBalance
+ */
+
+/**
  * Create a new participant entry.
  * @param {string} name
  * @returns {Participant}
@@ -58,13 +67,63 @@ function createExpense({ description, amount, payerId, participantIds }) {
 
 /**
  * Basic in-memory store for the application.
- * Calculation logic will be implemented in a later issue.
  * @type {AppState}
  */
 const state = {
   participants: [],
   expenses: [],
 };
+
+/**
+ * Compute how much each participant has paid vs. should pay.
+ * Positive netBalance => participant should receive money.
+ * Negative netBalance => participant should pay money.
+ *
+ * @param {AppState} currentState
+ * @returns {BalanceEntry[]}
+ */
+function calculateBalances(currentState) {
+  /** @type {Record<string, BalanceEntry>} */
+  const balancesById = {};
+
+  for (const participant of currentState.participants) {
+    balancesById[participant.id] = {
+      participantId: participant.id,
+      name: participant.name,
+      paidTotal: 0,
+      shareTotal: 0,
+      netBalance: 0,
+    };
+  }
+
+  for (const expense of currentState.expenses) {
+    const involvedIds =
+      expense.participantIds.length > 0 ? expense.participantIds : currentState.participants.map((p) => p.id);
+
+    if (involvedIds.length === 0 || expense.amount <= 0) continue;
+
+    const share = expense.amount / involvedIds.length;
+
+    // The payer actually paid the full amount
+    const payerEntry = balancesById[expense.payerId];
+    if (payerEntry) {
+      payerEntry.paidTotal += expense.amount;
+    }
+
+    // Each involved participant owes a share
+    for (const pid of involvedIds) {
+      const entry = balancesById[pid];
+      if (!entry) continue;
+      entry.shareTotal += share;
+    }
+  }
+
+  for (const entry of Object.values(balancesById)) {
+    entry.netBalance = Number((entry.paidTotal - entry.shareTotal).toFixed(2));
+  }
+
+  return Object.values(balancesById);
+}
 
 const expenseStore = {
   /** @returns {Participant[]} */
@@ -93,6 +152,13 @@ const expenseStore = {
   addExpense(expense) {
     state.expenses.push(expense);
   },
+
+  /**
+   * @returns {BalanceEntry[]}
+   */
+  calculateBalances() {
+    return calculateBalances(state);
+  },
 };
 
 // Expose a small API on window for later UI wiring.
@@ -101,5 +167,6 @@ window.SES = {
   createParticipant,
   createExpense,
   expenseStore,
+  calculateBalances,
 };
 
