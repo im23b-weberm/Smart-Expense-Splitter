@@ -26,10 +26,25 @@
           <h2 id="participants-heading" class="panel__title">Participants</h2>
         </div>
         <div class="panel__content">
-          <!-- Form and list for participants will be implemented in later issues -->
-          <p class="panel__placeholder">
-            Add the people who share expenses in this group.
-          </p>
+          <form id="participant-form" class="form form--inline" autocomplete="off">
+            <label class="field">
+              <span class="field__label">Name</span>
+              <input
+                id="participant-name"
+                name="participant-name"
+                class="field__input"
+                type="text"
+                placeholder="e.g. Alice"
+                required
+              />
+            </label>
+            <button type="submit" class="btn btn--primary">Add participant</button>
+          </form>
+          <p id="participant-error" class="form-error" aria-live="polite"></p>
+
+          <div class="chip-list" id="participant-list" aria-live="polite" aria-atomic="true">
+            <!-- Participant chips are rendered here -->
+          </div>
         </div>
       </section>
 
@@ -38,10 +53,70 @@
           <h2 id="expenses-heading" class="panel__title">Expenses</h2>
         </div>
         <div class="panel__content">
-          <!-- Form and table for expenses will be implemented in later issues -->
-          <p class="panel__placeholder">
-            Enter each expense with payer and involved participants.
-          </p>
+          <form id="expense-form" class="form form--grid" autocomplete="off">
+            <label class="field field--full">
+              <span class="field__label">Description</span>
+              <input
+                id="expense-description"
+                name="expense-description"
+                class="field__input"
+                type="text"
+                placeholder="e.g. Dinner, groceries, hotel"
+                required
+              />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Amount</span>
+              <input
+                id="expense-amount"
+                name="expense-amount"
+                class="field__input"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                required
+              />
+            </label>
+
+            <label class="field">
+              <span class="field__label">Payer</span>
+              <select id="expense-payer" name="expense-payer" class="field__input" required>
+                <option value="">Select payer…</option>
+              </select>
+            </label>
+
+            <fieldset class="field field--full">
+              <legend class="field__label">Involved participants</legend>
+              <p class="field__hint">
+                If none are selected, the expense will be shared between all participants.
+              </p>
+              <div id="expense-participants" class="checkbox-grid">
+                <!-- Participant checkboxes are rendered here -->
+              </div>
+            </fieldset>
+
+            <div class="form__actions field--full">
+              <button type="submit" class="btn btn--primary">Add expense</button>
+            </div>
+          </form>
+
+          <p id="expense-error" class="form-error" aria-live="polite"></p>
+
+          <div class="expenses-table-wrapper">
+            <table class="expenses-table">
+              <thead>
+                <tr>
+                  <th scope="col">Description</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Payer</th>
+                  <th scope="col">Shared with</th>
+                </tr>
+              </thead>
+              <tbody id="expenses-rows"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -78,6 +153,7 @@
 
     <script src="app.js" type="module"></script>
     <script src="results-ui.js" type="module"></script>
+    <script src="ui.js" type="module"></script>
   </body>
 </html>
 
