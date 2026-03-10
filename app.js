@@ -33,11 +33,21 @@
  */
 
 /**
+ * @param {string} name
+ */
+function ensureValidParticipantName(name) {
+  if (typeof name !== "string" || name.trim().length === 0) {
+    throw new Error("Participant name must not be empty.");
+  }
+}
+
+/**
  * Create a new participant entry.
  * @param {string} name
  * @returns {Participant}
  */
 function createParticipant(name) {
+  ensureValidParticipantName(name);
   return {
     id: crypto.randomUUID(),
     name: name.trim(),
@@ -55,12 +65,27 @@ function createParticipant(name) {
  * @returns {Expense}
  */
 function createExpense({ description, amount, payerId, participantIds }) {
+  const trimmedDescription = (description ?? "").toString().trim();
+  if (!trimmedDescription) {
+    throw new Error("Expense description must not be empty.");
+  }
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("Expense amount must be a positive number.");
+  }
+
+  if (!payerId) {
+    throw new Error("Expense must have a payer.");
+  }
+
+  const uniqueParticipantIds = Array.from(new Set(participantIds || []));
+
   return /** @type {Expense} */ ({
     id: crypto.randomUUID(),
-    description: description.trim(),
+    description: trimmedDescription,
     amount,
     payerId,
-    participantIds: [...participantIds],
+    participantIds: uniqueParticipantIds,
     createdAt: new Date().toISOString(),
   });
 }
