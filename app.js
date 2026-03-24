@@ -195,3 +195,8 @@ window.SES = {
   calculateBalances,
 };
 
+export {
+  createParticipant,
+  createExpense,
+  calculateBalances,
+};
