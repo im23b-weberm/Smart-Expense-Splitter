@@ -32,6 +32,52 @@
  * @property {number} netBalance
  */
 
+const STORAGE_KEY = "smart-expense-splitter-state";
+
+function getDefaultState() {
+  return {
+    participants: [],
+    expenses: [],
+  };
+}
+
+function isBrowserStorageAvailable() {
+  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+}
+
+function loadState() {
+  if (!isBrowserStorageAvailable()) {
+    return getDefaultState();
+  }
+
+  try {
+    const storedState = window.localStorage.getItem(STORAGE_KEY);
+    if (!storedState) {
+      return getDefaultState();
+    }
+
+    const parsedState = JSON.parse(storedState);
+    return {
+      participants: Array.isArray(parsedState?.participants) ? parsedState.participants : [],
+      expenses: Array.isArray(parsedState?.expenses) ? parsedState.expenses : [],
+    };
+  } catch {
+    return getDefaultState();
+  }
+}
+
+function persistState() {
+  if (!isBrowserStorageAvailable()) {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Ignore storage errors so the app still works without persistence.
+  }
+}
+
 /**
  * @param {string} name
  */
@@ -94,10 +140,7 @@ function createExpense({ description, amount, payerId, participantIds }) {
  * Basic in-memory store for the application.
  * @type {AppState}
  */
-const state = {
-  participants: [],
-  expenses: [],
-};
+const state = loadState();
 
 /**
  * Compute how much each participant has paid vs. should pay.
@@ -169,6 +212,7 @@ const expenseStore = {
     const participant = createParticipant(name);
 
     state.participants.push(participant);
+    persistState();
     return participant;
   },
 
@@ -177,6 +221,7 @@ const expenseStore = {
    */
   addExpense(expense) {
     state.expenses.push(expense);
+    persistState();
   },
 
   /**
