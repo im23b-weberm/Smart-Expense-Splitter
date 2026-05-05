@@ -167,15 +167,6 @@ const expenseStore = {
    */
   addParticipant(name) {
     const participant = createParticipant(name);
-    const normalizedName = participant.name.toLowerCase();
-
-    if (
-      state.participants.some(
-        (existingParticipant) => existingParticipant.name.toLowerCase() === normalizedName,
-      )
-    ) {
-      throw new Error("Participant name already exists.");
-    }
 
     state.participants.push(participant);
     return participant;
@@ -202,11 +193,5 @@ window.SES = {
   createParticipant,
   createExpense,
   expenseStore,
-  calculateBalances,
-};
-
-export {
-  createParticipant,
-  createExpense,
   calculateBalances,
 };

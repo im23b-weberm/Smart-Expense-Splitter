@@ -5,7 +5,6 @@ const {
   createParticipant,
   createExpense,
   calculateBalances,
-  expenseStore,
 } = window.SES;
 
 beforeEach(() => {
@@ -36,11 +35,6 @@ describe('Participant', () => {
     expect(() => createParticipant(name)).toThrow();
   });
 
-  it('should reject duplicate participant names', () => {
-    expenseStore.addParticipant('Max');
-
-    expect(() => expenseStore.addParticipant(' max ')).toThrow('Participant name already exists.');
-  });
 });
 
 describe('Expense', () => {
