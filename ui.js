@@ -1,6 +1,6 @@
 const currencyFormatter = new Intl.NumberFormat(undefined, {
   style: "currency",
-  currency: "EUR",
+  currency: "CHF",
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
