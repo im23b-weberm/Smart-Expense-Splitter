@@ -1,11 +1,17 @@
-import { describe, it, expect } from 'vitest';
+import { beforeEach, describe, it, expect } from 'vitest';
 
 // Zugriff über window (weil du es so exportierst)
 const {
   createParticipant,
   createExpense,
   calculateBalances,
+  expenseStore,
 } = window.SES;
+
+beforeEach(() => {
+  window.SES.state.participants = [];
+  window.SES.state.expenses = [];
+});
 
 describe('Participant', () => {
   it('should create a valid participant', () => {
@@ -28,6 +34,12 @@ describe('Participant', () => {
 
     // Act & Assert
     expect(() => createParticipant(name)).toThrow();
+  });
+
+  it('should reject duplicate participant names', () => {
+    expenseStore.addParticipant('Max');
+
+    expect(() => expenseStore.addParticipant(' max ')).toThrow('Participant name already exists.');
   });
 });
 
