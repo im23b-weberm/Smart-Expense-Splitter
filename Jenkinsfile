@@ -13,6 +13,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -21,17 +22,19 @@ pipeline {
 
         stage('SonarQube Analysis') {
             when {
-                branch 'develop'
+                branch 'main'
             }
+
             steps {
                 sh """
                     echo "Starting SonarQube analysis of $PROJECT_NAME"
-                    echo "SONAR_SCANNER_OPTS=$SONAR_SCANNER_OPTS"
-                    echo "NODE_OPTIONS=$NODE_OPTIONS"
                 """
+
                 script {
                     def scannerHome = tool 'sonar-scanner'
+
                     withSonarQubeEnv('SonarQube') {
+
                         sh """
                         ${scannerHome}/bin/sonar-scanner \
                           -Dsonar.projectKey=${PROJECT_NAME} \
@@ -43,16 +46,18 @@ pipeline {
         }
 
         stage('Deploy Frontend') {
+
             when {
-                anyOf {
-                    branch 'test'
-                }
+                branch 'test'
             }
+
             steps {
+
                 sh '''
                     echo "Deploying frontend to $TARGET_DIR"
 
                     mkdir -p "$TARGET_DIR"
+
                     rm -rf "$TARGET_DIR"/*
 
                     cp -r frontend/* "$TARGET_DIR"/
