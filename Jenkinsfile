@@ -45,7 +45,7 @@ pipeline {
         stage('Deploy Frontend') {
             when {
                 anyOf {
-                    branch 'main'
+                    branch 'test'
                 }
             }
             steps {
