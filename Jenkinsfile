@@ -48,7 +48,7 @@ pipeline {
         stage('Deploy Frontend') {
 
             when {
-                branch 'test'
+                branch 'main'
             }
 
             steps {
@@ -60,7 +60,7 @@ pipeline {
 
                     rm -rf "$TARGET_DIR"/*
 
-                    cp -r frontend/* "$TARGET_DIR"/
+                    cp -r /* "$TARGET_DIR"/
                 '''
             }
         }
