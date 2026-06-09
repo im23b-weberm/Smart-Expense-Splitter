@@ -47,9 +47,6 @@ pipeline {
 
         stage('Deploy Frontend') {
 
-            when {
-                branch 'main'
-            }
 
             steps {
 
