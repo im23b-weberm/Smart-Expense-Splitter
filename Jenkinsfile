@@ -57,7 +57,7 @@ pipeline {
 
                     rm -rf "$TARGET_DIR"/*
 
-                    cp -r /* "$TARGET_DIR"/
+                    cp -r ./* "$TARGET_DIR"/
                 '''
             }
         }
