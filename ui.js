@@ -209,6 +209,7 @@ function setupExpenseForm() {
 function setupBackupControls() {
   const exportButton = document.getElementById("backup-export");
   const importTrigger = document.getElementById("backup-import-trigger");
+  const resetButton = document.getElementById("backup-reset");
   const importInput = document.getElementById("backup-import-input");
   const messageEl = document.getElementById("backup-message");
 
@@ -247,6 +248,16 @@ function setupBackupControls() {
     importInput.click();
   });
 
+  if (resetButton) {
+    resetButton.addEventListener("click", () => {
+      if (!window.SES?.expenseStore) return;
+      if (!confirm("Reset all data? This cannot be undone.")) return;
+      window.SES.expenseStore.reset();
+      renderAll();
+      setMessage("All data reset.");
+    });
+  }
+
   importInput.addEventListener("change", async () => {
     if (!window.SES?.expenseStore) return;
 
@@ -265,17 +276,6 @@ function setupBackupControls() {
       importInput.value = "";
     }
   });
-
-  const resetButton = document.getElementById("backup-reset");
-  if (resetButton) {
-    resetButton.addEventListener("click", () => {
-      if (!confirm("Reset all data? This cannot be undone.")) return;
-      if (!window.SES?.expenseStore) return;
-      window.SES.expenseStore.reset();
-      renderAll();
-      setMessage("All data reset.");
-    });
-  }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
