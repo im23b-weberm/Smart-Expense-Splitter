@@ -37,6 +37,7 @@ function renderParticipants() {
     chip.innerHTML = `
       <span class="chip__avatar" aria-hidden="true"></span>
       <span class="chip__label">${p.name}</span>
+      <button class="chip__delete" data-id="${p.id}" title="Remove participant">×</button>
     `;
     list.appendChild(chip);
 
@@ -82,9 +83,46 @@ function renderExpenses() {
       <td>${currencyFormatter.format(e.amount)}</td>
       <td>${payerName}</td>
       <td>${sharedNames}</td>
+      <td><button class="btn btn--secondary btn--icon expense-delete" data-id="${e.id}" title="Delete expense">Delete</button></td>
     `;
 
     tbody.appendChild(tr);
+  }
+}
+
+function setupRowDeletionHandlers() {
+  const participantList = document.getElementById("participant-list");
+  const expensesTbody = document.getElementById("expenses-rows");
+  const messageEl = document.getElementById("backup-message");
+
+  const setMessage = (msg) => {
+    if (messageEl) messageEl.textContent = msg;
+  };
+
+  if (participantList) {
+    participantList.addEventListener("click", (ev) => {
+      const btn = ev.target.closest?.(".chip__delete");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (!id) return;
+      if (!confirm("Remove participant and related expenses?")) return;
+      window.SES.expenseStore.removeParticipant(id);
+      renderAll();
+      setMessage("Participant removed.");
+    });
+  }
+
+  if (expensesTbody) {
+    expensesTbody.addEventListener("click", (ev) => {
+      const btn = ev.target.closest?.(".expense-delete");
+      if (!btn) return;
+      const id = btn.dataset.id;
+      if (!id) return;
+      if (!confirm("Delete this expense?")) return;
+      window.SES.expenseStore.removeExpense(id);
+      renderAll();
+      setMessage("Expense deleted.");
+    });
   }
 }
 
@@ -227,6 +265,17 @@ function setupBackupControls() {
       importInput.value = "";
     }
   });
+
+  const resetButton = document.getElementById("backup-reset");
+  if (resetButton) {
+    resetButton.addEventListener("click", () => {
+      if (!confirm("Reset all data? This cannot be undone.")) return;
+      if (!window.SES?.expenseStore) return;
+      window.SES.expenseStore.reset();
+      renderAll();
+      setMessage("All data reset.");
+    });
+  }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -234,5 +283,6 @@ window.addEventListener("DOMContentLoaded", () => {
   setupParticipantForm();
   setupExpenseForm();
   setupBackupControls();
+  setupRowDeletionHandlers();
 });
 

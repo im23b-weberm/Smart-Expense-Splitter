@@ -353,6 +353,52 @@ const expenseStore = {
   },
 
   /**
+   * Remove a participant and update expenses accordingly.
+   * @param {string} participantId
+   * @returns {boolean} removed
+   */
+  removeParticipant(participantId) {
+    const pIndex = state.participants.findIndex((p) => p.id === participantId);
+    if (pIndex === -1) return false;
+
+    state.participants.splice(pIndex, 1);
+
+    const newExpenses = state.expenses
+      .map((exp) => {
+        if (exp.payerId === participantId) return null; // drop expenses where payer removed
+        return {
+          ...exp,
+          participantIds: (exp.participantIds || []).filter((id) => id !== participantId),
+        };
+      })
+      .filter(Boolean);
+
+    state.expenses.splice(0, state.expenses.length, ...newExpenses);
+    persistState();
+    return true;
+  },
+
+  /**
+   * Remove a single expense by id.
+   * @param {string} expenseId
+   * @returns {boolean}
+   */
+  removeExpense(expenseId) {
+    const idx = state.expenses.findIndex((e) => e.id === expenseId);
+    if (idx === -1) return false;
+    state.expenses.splice(idx, 1);
+    persistState();
+    return true;
+  },
+
+  /**
+   * Reset the entire app state to defaults.
+   */
+  reset() {
+    overwriteState(getDefaultState());
+  },
+
+  /**
    * @param {AppState} nextState
    */
   replaceState(nextState) {
