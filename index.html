@@ -26,6 +26,22 @@
           <h2 id="participants-heading" class="panel__title">Participants</h2>
         </div>
         <div class="panel__content">
+          <div class="backup-tools" aria-label="Backup tools">
+            <button type="button" id="backup-export" class="btn btn--secondary">
+              Download backup
+            </button>
+            <button type="button" id="backup-import-trigger" class="btn btn--secondary">
+              Import backup
+            </button>
+            <input
+              id="backup-import-input"
+              class="backup-tools__input"
+              type="file"
+              accept=".json,.ses.json,application/json"
+            />
+          </div>
+          <p id="backup-message" class="form-note" aria-live="polite"></p>
+
           <form id="participant-form" class="form form--inline" autocomplete="off">
             <label class="field">
               <span class="field__label">Name</span>

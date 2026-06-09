@@ -13,6 +13,12 @@ function getExpenses() {
   return window.SES?.expenseStore.getExpenses() ?? [];
 }
 
+function renderAll() {
+  renderParticipants();
+  renderExpenses();
+  window.SES_RESULTS?.renderResults();
+}
+
 function renderParticipants() {
   const list = document.getElementById("participant-list");
   const payerSelect = document.getElementById("expense-payer");
@@ -162,10 +168,71 @@ function setupExpenseForm() {
   });
 }
 
+function setupBackupControls() {
+  const exportButton = document.getElementById("backup-export");
+  const importTrigger = document.getElementById("backup-import-trigger");
+  const importInput = document.getElementById("backup-import-input");
+  const messageEl = document.getElementById("backup-message");
+
+  if (!exportButton || !importTrigger || !importInput || !messageEl) {
+    return;
+  }
+
+  const setMessage = (message) => {
+    messageEl.textContent = message;
+  };
+
+  exportButton.addEventListener("click", () => {
+    if (!window.SES?.expenseStore) return;
+
+    try {
+      const backup = window.SES.expenseStore.exportState();
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const stamp = backup.exportedAt.replace(/[:.]/g, "-");
+
+      link.href = url;
+      link.download = `smart-expense-splitter-backup-${stamp}.ses.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+
+      setMessage("Backup downloaded.");
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Could not export backup.");
+    }
+  });
+
+  importTrigger.addEventListener("click", () => {
+    importInput.click();
+  });
+
+  importInput.addEventListener("change", async () => {
+    if (!window.SES?.expenseStore) return;
+
+    const [file] = importInput.files ?? [];
+    if (!file) return;
+
+    try {
+      const content = await file.text();
+      const payload = JSON.parse(content);
+      window.SES.expenseStore.importState(payload);
+      renderAll();
+      setMessage("Backup imported.");
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Could not import backup.");
+    } finally {
+      importInput.value = "";
+    }
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
-  renderParticipants();
-  renderExpenses();
+  renderAll();
   setupParticipantForm();
   setupExpenseForm();
+  setupBackupControls();
 });
 
